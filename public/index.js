@@ -96,15 +96,15 @@ $(document).ready(function() {
       const card = $(this).attr('data-card');
       socket.emit('choice_mine', card);
       $('.choice img').remove()
-      $('.choice').append(`<img src="img/heart_${card}.png"/>`);
       $('.mine div').off('click');
+      $('.choice').append(`<img src="img/cover.png"/>`);
       checkCard.mine = Number(card);
       $(this).remove();
-      checkForNextRound(card);
+      setTime()
     })
   }
 
-  function checkForNextRound(card) {
+  function checkForNextRound() {
     if(checkCard.mine && checkCard.opponent) {
       points();
       checkCard.mine = 0;
@@ -120,6 +120,20 @@ $(document).ready(function() {
       $('.ready_room').addClass('hidden');
       $('.main').removeClass('hidden');
       setSpade();
+    }
+  }
+
+  function setTime() {
+    if(checkCard.mine && checkCard.opponent){
+      setTimeout(function(){
+        $('.opponent').empty();
+        $('.choice').empty();
+        $('.opponent').append(`<img src="img/diamond_${checkCard.opponent}.png"/>`);
+        $('.choice').append(`<img src="img/heart_${checkCard.mine}.png"/>`);
+        setTimeout(function(){
+          checkForNextRound();
+        }, 3000)
+      }, 3000);
     }
   }
 
@@ -140,9 +154,9 @@ $(document).ready(function() {
   })
 
   socket.on('get_opponent', function(card){
-    $('.opponent').append(`<img src="img/diamond_${card}.png"/>`);
+    $('.opponent').append(`<img src="img/cover.png"/>`);
     checkCard.opponent = Number(card);
-    checkForNextRound(card);
+    setTime();
   })
 
   $('.game_container').on('click', '.ready', function() {
