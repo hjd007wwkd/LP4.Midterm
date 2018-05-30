@@ -1,0 +1,65 @@
+body {
+  width: 100%;
+  height: 100%;
+}
+.game_container {
+  width: 500px;
+  height: 700px;
+  margin: auto;
+  padding: 20px;
+  background-image: url('img/wooden_background.png');
+}
+
+.my_point{
+  display: inline;
+}
+
+.opponent_point{
+  display: inline;
+  float: right;
+}
+
+.main {
+  width: 100%;
+  height: 100%;
+}
+
+.opponent, .spade, .mine, .choice {
+  width: 100%;
+  height: 23%;
+  text-align: center;
+  margin: auto;
+}
+
+.opponent img, .spade img, .choice img{
+  width: 80px;
+  height: 100px;
+  box-shadow: 2px 4px rgba(80,80,80,0.5);
+}
+
+.mine div {
+  display: inline;
+  margin: 0 5px;
+}
+
+.mine div img {
+  width: 50px;
+  height: 70px;
+  box-shadow: 2px 4px rgba(80,80,80,0.5);
+  transition: 0.3s;
+}
+
+.mine div img:hover {
+  cursor: pointer;
+  width: 70px;
+  height: 80px;
+  box-shadow: 5px 10px rgba(80,80,80,0.5)
+}
+
+.waiting {
+  text-align: center;
+}
+
+.hidden {
+  display: none;
+}

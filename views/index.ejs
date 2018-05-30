@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Card Game</title>
+  <link rel="stylesheet" href="/index.css" type="text/css" />
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="index.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <div class='game_container'>
+    <div class='waiting'>
+      waiting...
+    </div>
+    <div class='ready_room hidden'>
+      <div class='ready'>ready</div>
+      <div class='opponent_ready'></div>
+    </div>
+    <div class='main hidden'>
+      <div class='my_point'>0</div>
+      <div class='opponent_point'>0</div>
+      <div class='opponent'></div>
+      <div class='spade'></div>
+      <div class='choice'></div>
+      <div class='mine'>
+        <div data-card=1><img src='img/heart_1.png'/></div>
+        <div data-card=2><img src='img/heart_2.png'/></div>
+        <div data-card=3><img src='img/heart_3.png'/></div>
+        <div data-card=4><img src='img/heart_4.png'/></div>
+        <div data-card=5><img src='img/heart_5.png'/></div>
+        <div data-card=6><img src='img/heart_6.png'/></div>
+        <div data-card=7><img src='img/heart_7.png'/></div>
+        <div data-card=8><img src='img/heart_8.png'/></div>
+        <div data-card=9><img src='img/heart_9.png'/></div>
+        <div data-card=10><img src='img/heart_10.png'/></div>
+        <div data-card=11><img src='img/heart_11.png'/></div>
+        <div data-card=12><img src='img/heart_12.png'/></div>
+        <div data-card=13><img src='img/heart_13.png'/></div>
+      </div>
+    </div>
+    <div class='end hidden'>
+      <div class='finish'></div>
+      <div class='result'></div>
+      <div class='restart'>Restart</div>
+    </div>
+  </div>
+</body>
+</html>
