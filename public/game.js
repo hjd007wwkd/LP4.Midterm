@@ -1,7 +1,7 @@
 function start() {
   const waiting = $('<div>').addClass('waiting');
   const words = $('<p>').addClass('waitingLetter').text('Waiting For Opponent');
-  const waitingAni = $('<div>').addClass('container');
+  const waitingAni = $('<div>').addClass('waiting_ani_container');
   const list = $('<ul>').append('<li>').append('<li>').append('<li>').append('<li>').append('<li>');
   waitingAni.append(list);
   waiting.append(words).append(waitingAni);
@@ -64,6 +64,7 @@ $(document).ready(function() {
     myPoint = 0;
     opponentPoint = 0;
     $('.game_container').empty();
+    $('.chat_log').empty();
   }
 
   function result() {
@@ -178,6 +179,31 @@ $(document).ready(function() {
     checkReady.push(ready);
     checkIfReady();
   })
+
+  $('.chat_form').on('submit', function(e){
+    e.preventDefault();
+    socket.emit('send message', $('.message').val());
+    $('.message').val("");
+    $(".message").focus();
+  });
+
+  socket.on('message', function(msg){
+    $('.chat_log').append("<p class=\"otherMessage\">"+msg+"</p>");
+    $('.chat_log').scrollTop($('.chat_log')[0].scrollHeight);
+  });
+
+  socket.on('myMessage', function(msg){
+    $('.chat_log').append("<p class=\"myMessage\">"+msg+"</p>");
+    $('.chat_log').scrollTop($('.chat_log')[0].scrollHeight);
+  });
+
+  socket.on('disconnect', function(name){
+    $('.chat_log').append("<p class=\"disconnect\">"+name+" disconnected"+"</p>");
+  });
+
+  socket.on('Userconnect', function(name){
+    $('.chat_log').append("<p class=\"connect\">"+name+" connected"+"</p>");
+  });
 })
 
 

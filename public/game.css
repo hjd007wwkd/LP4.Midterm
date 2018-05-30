@@ -1,7 +1,5 @@
 .game_container {
-  width: 500px;
-  height: 700px;
-  margin: auto;
+  height: 100%;
   padding: 20px;
   background-image: url('img/wooden_background.png');
 }
@@ -69,6 +67,7 @@
 
 .waiting {
   height: 100%;
+  width: 100%;
   text-align: center;
 }
 
@@ -115,7 +114,7 @@
 
 
 /*Waiting animation*/
-.container {
+.waiting_ani_container {
   display: flex;
   justify-content: center;
   align-items: center;
