@@ -7,9 +7,11 @@ function start() {
   waiting.append(words).append(waitingAni);
 
   const ready_room = $('<div>').addClass('ready_room hidden');
-  const ready = $('<div>').addClass('ready').text('ready');
+  const opponent_container = $('<div>').addClass('opponent_container');
   const opponent_ready = $('<div>').addClass('opponent_ready');
-  ready_room.append(ready).append(opponent_ready);
+  const ready_container = $('<div>').addClass('ready_container');
+  const ready = $('<div>').addClass('ready').text('Ready');
+  ready_room.append(opponent_ready).append(ready);
 
   const main = $('<div>').addClass('main hidden');
   const my_point = $('<div>').addClass('my_point').text('0');
