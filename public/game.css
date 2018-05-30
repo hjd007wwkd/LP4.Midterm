@@ -4,7 +4,7 @@
   background-image: url('img/wooden_background.png');
 }
 
-.label, .point {
+.label_both, .point {
   width: 100%;
 }
 

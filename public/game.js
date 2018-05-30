@@ -14,7 +14,7 @@ function start() {
   ready_room.append(opponent_ready).append(ready);
 
   const main = $('<div>').addClass('main hidden');
-  const label = $('<div>').addClass('label')
+  const label = $('<div>').addClass('label_both')
   const label_myside = $('<p>').addClass('label_myside').text('Home');
   const label_opponent = $('<p>').addClass('label_opponent').text('Opponent');
   label.append(label_myside).append(label_opponent);
