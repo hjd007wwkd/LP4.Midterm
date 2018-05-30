@@ -1,5 +1,10 @@
 function start() {
-  const waiting = $('<div>').addClass('waiting').text('waiting...');
+  const waiting = $('<div>').addClass('waiting');
+  const words = $('<p>').addClass('waitingLetter').text('Waiting For Opponent');
+  const waitingAni = $('<div>').addClass('container');
+  const list = $('<ul>').append('<li>').append('<li>').append('<li>').append('<li>').append('<li>');
+  waitingAni.append(list);
+  waiting.append(words).append(waitingAni);
 
   const ready_room = $('<div>').addClass('ready_room hidden');
   const ready = $('<div>').addClass('ready').text('ready');
@@ -139,11 +144,11 @@ $(document).ready(function() {
   })
 
   $('.game_container').on('click', '.ready', function() {
-      checkReady.push(1);
-      socket.emit('ready', 1);
-      checkIfReady();
-      $('.ready').off('click');
-    })
+    checkReady.push(1);
+    socket.emit('ready', 1);
+    checkIfReady();
+    $('.ready').off('click');
+  })
 
   socket.on('opponent_ready', function(ready){
     $('.opponent_ready').text('opponent ready');
