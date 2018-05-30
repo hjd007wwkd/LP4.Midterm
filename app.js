@@ -43,10 +43,6 @@ io.on('connection', function(socket){
 
     socket.room = room_title;
     io.to(socket.id).emit('spade', io.sockets.adapter.rooms[room_title].spade);
-
-    console.log(io.sockets.adapter.rooms.title)
-    console.log(io.sockets.adapter.rooms[room_title].active)
-    console.log(io.sockets.adapter.rooms[room_title].length)
   })
 
   socket.on('ready', function(ready) {

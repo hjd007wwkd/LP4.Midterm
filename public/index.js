@@ -1,3 +1,35 @@
+function start() {
+  const waiting = $('<div>').addClass('waiting').text('waiting...');
+
+  const ready_room = $('<div>').addClass('ready_room hidden');
+  const ready = $('<div>').addClass('ready').text('ready');
+  const opponent_ready = $('<div>').addClass('opponent_ready');
+  ready_room.append(ready).append(opponent_ready);
+
+  const main = $('<div>').addClass('main hidden');
+  const my_point = $('<div>').addClass('my_point').text('0');
+  const opponent_point = $('<div>').addClass('opponent_point').text('0');
+  const opponent = $('<div>').addClass('opponent');
+  const spade = $('<div>').addClass('spade');
+  const choice = $('<div>').addClass('choice');
+  const mine = $('<div>').addClass('mine');
+  for(let i = 1; i <= 13; i++){
+    const card = $('<div>').attr('data-card', i);
+    const img = $(`<img src='img/heart_${i}.png'>`);
+    card.append(img);
+    mine.append(card);
+  }
+  main.append(my_point).append(opponent_point).append(opponent).append(spade).append(choice).append(mine);
+
+  const end = $('<div>').addClass('end hidden');
+  const finish = $('<div>').addClass('finish');
+  const result = $('<div>').addClass('result');
+  const restart = $('<div>').addClass('restart').text('Restart');
+  end.append(finish).append(result).append(restart);
+
+  $('.game_container').append(waiting).append(ready_room).append(main).append(end);
+}
+
 $(document).ready(function() {
   const socket = io();
   let spade;
@@ -8,6 +40,16 @@ $(document).ready(function() {
   let opponentPoint = 0;
 
   socket.emit('join', 1);
+
+  start();
+
+  function clear() {
+    checkCard.mine = 0;
+    checkCard.opponent = 0;
+    checkReady = [];
+    myPoint = 0;
+    opponentPoint = 0;
+  }
 
   function result() {
     if(myPoint > opponentPoint){
@@ -74,21 +116,20 @@ $(document).ready(function() {
     }
   }
 
+  $('.game_container').on('click', '.restart', function() {
+    clear();
+    $('.game_container').empty();
+    start();
+    socket.emit('join', 1);
+  })
+
   socket.on('spade', function(begin_spade){
     spade = begin_spade;
   })
 
   socket.on('room_ready', function(){
-    console.log('asds')
     $('.waiting').addClass('hidden');
     $('.ready_room').removeClass('hidden');
-  })
-
-  $('.ready').on('click', function() {
-    checkReady.push('1');
-    socket.emit('ready', 1);
-    checkIfReady();
-    $('.ready').off('click');
   })
 
   socket.on('get_opponent', function(card){
@@ -96,6 +137,13 @@ $(document).ready(function() {
     checkCard.opponent = Number(card);
     checkForNextRound(card);
   })
+
+  $('.game_container').on('click', '.ready', function() {
+      checkReady.push(1);
+      socket.emit('ready', 1);
+      checkIfReady();
+      $('.ready').off('click');
+    })
 
   socket.on('opponent_ready', function(ready){
     $('.opponent_ready').text('opponent ready');
