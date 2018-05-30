@@ -1,0 +1,27 @@
+.navbar-header {
+  float: left;
+  margin: 5px;
+}
+
+.navbar-header img {
+  height: 60px;
+  width: 60px;
+  float: left;
+  margin-right: 10px;
+}
+
+.navbar-header p {
+  text-transform: uppercase;
+  line-height: 35px;
+  font-weight: bold;
+}
+
+.navbar-text {
+  float:right;
+  line-height: 35px;
+}
+
+.navbar-link {
+  float:right;
+  line-height: 70px;
+}
