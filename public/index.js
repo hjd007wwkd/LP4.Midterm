@@ -14,8 +14,16 @@ function start() {
   ready_room.append(opponent_ready).append(ready);
 
   const main = $('<div>').addClass('main hidden');
-  const my_point = $('<div>').addClass('my_point').text('0');
-  const opponent_point = $('<div>').addClass('opponent_point').text('0');
+  const label = $('<div>').addClass('label')
+  const label_myside = $('<p>').addClass('label_myside').text('Home');
+  const label_opponent = $('<p>').addClass('label_opponent').text('Opponent');
+  label.append(label_myside).append(label_opponent);
+
+  const point = $('<div>').addClass('point');
+  const my_point = $('<p>').addClass('my_point').text('0');
+  const opponent_point = $('<p>').addClass('opponent_point').text('0');
+  point.append(my_point).append(opponent_point);
+
   const opponent = $('<div>').addClass('opponent');
   const spade = $('<div>').addClass('spade');
   const choice = $('<div>').addClass('choice');
@@ -26,13 +34,12 @@ function start() {
     card.append(img);
     mine.append(card);
   }
-  main.append(my_point).append(opponent_point).append(opponent).append(spade).append(choice).append(mine);
+  main.append(label).append(point).append(opponent).append(spade).append(choice).append(mine);
 
   const end = $('<div>').addClass('end hidden');
-  const finish = $('<div>').addClass('finish');
   const result = $('<div>').addClass('result');
   const restart = $('<div>').addClass('restart').text('Restart');
-  end.append(finish).append(result).append(restart);
+  end.append(result).append(restart);
 
   $('.game_container').append(waiting).append(ready_room).append(main).append(end);
 }
@@ -56,15 +63,16 @@ $(document).ready(function() {
     checkReady = [];
     myPoint = 0;
     opponentPoint = 0;
+    $('.game_container').empty();
   }
 
   function result() {
     if(myPoint > opponentPoint){
       $('.result').text("Winner!!");
     } else if(myPoint < opponentPoint) {
-      $('.result').text("Loser!!");
+      $('.result').text("Lose....");
     } else {
-      $('.result').text('Draw!!');
+      $('.result').text('Draw!');
     }
   }
 
@@ -132,14 +140,13 @@ $(document).ready(function() {
         $('.choice').append(`<img src="img/heart_${checkCard.mine}.png"/>`);
         setTimeout(function(){
           checkForNextRound();
-        }, 3000)
-      }, 3000);
+        }, 2000)
+      }, 1000);
     }
   }
 
   $('.game_container').on('click', '.restart', function() {
     clear();
-    $('.game_container').empty();
     start();
     socket.emit('join', 1);
   })

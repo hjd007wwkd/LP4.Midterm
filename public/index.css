@@ -10,14 +10,29 @@ body {
   background-image: url('img/wooden_background.png');
 }
 
-.my_point{
-  display: inline;
+.label, .point {
+  width: 100%;
 }
 
-.opponent_point{
-  display: inline;
-  float: right;
+.label_myside, .my_point{
+  display: inline-block;
+  margin: 0;
 }
+
+.label_opponent, .opponent_point {
+  display: inline-block;
+  float: right;
+  margin: 0;
+}
+
+.my_point {
+  margin-left: 1em;
+}
+
+.opponent_point {
+  margin-right: 1em;
+}
+
 
 .main {
   width: 100%;
@@ -71,7 +86,7 @@ body {
   height: 100%;
 }
 
-.opponent_ready {
+.opponent_ready, .restart {
   height: 50%;
   text-align: center;
   font-size: 100px;
@@ -79,7 +94,7 @@ body {
   vertical-align: center;
 }
 
-.ready {
+.ready, .result {
   height: 50%;
   text-align: center;
   color: #ffffff;
@@ -88,9 +103,14 @@ body {
   vertical-align: center;
 }
 
-.ready:hover {
+.ready:hover, .restart:hover {
   text-shadow: 1px 1px rgba(80,80,80,0.5);
   cursor: pointer;
+}
+
+.end {
+  height: 100%;
+  width: 100%;
 }
 
 .hidden {
