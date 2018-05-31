@@ -6,7 +6,7 @@ module.exports = function(knex) {
 
   routes.get('/', (req, res) => {
     if(req.session.username){
-      res.render('main_room');
+      res.render('main_room', {username: req.session.username});
     } else {
       res.redirect('/login');
     }

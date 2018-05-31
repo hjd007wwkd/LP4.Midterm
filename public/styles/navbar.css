@@ -3,5 +3,7 @@
 }
 
 .navbar {
-  margin-bottom: 2px;
+  margin-bottom: 0;
+  border: 0;
+  height: 5%;
 }
