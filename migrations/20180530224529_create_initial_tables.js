@@ -10,7 +10,7 @@ exports.up = function(knex, Promise) {
         table.integer('total_score');
         table.integer('wins');
         table.integer('losses');
-        table.integer('draw');
+        table.integer('draws');
         table.integer('user_id').notNullable();
         table.foreign('user_id').references('id').inTable('users');
       })
