@@ -52,6 +52,8 @@ $(document).ready(function() {
   let checkReady = [];
   let myPoint = 0;
   let opponentPoint = 0;
+  let myProfile;
+  let opponentProfile;
 
   socket.emit('join', 1);
 
@@ -70,10 +72,13 @@ $(document).ready(function() {
   function result() {
     if(myPoint > opponentPoint){
       $('.result').text("Winner!!");
+      postScore('wins', myPoint);
     } else if(myPoint < opponentPoint) {
       $('.result').text("Lose....");
+      postScore('losses', -myPoint);
     } else {
       $('.result').text('Draw!');
+      postScore('draws', 0);
     }
   }
 
@@ -141,9 +146,20 @@ $(document).ready(function() {
         $('.choice').append(`<img src="img/heart_${checkCard.mine}.png"/>`);
         setTimeout(function(){
           checkForNextRound();
-        }, 1000)
-      }, 1000);
+        }, 0)
+      }, 0);
     }
+  }
+
+  function postScore(status, score) {
+    $.post("/score", {'status': status, 'score': score})
+    .done(function(data){
+      //successfully deleted message
+      alertMessage("11");
+    })
+    .fail(function(error) {
+      console.log(error);
+    })
   }
 
   $('.game_container').on('click', '.restart', function() {
@@ -156,9 +172,20 @@ $(document).ready(function() {
     spade = begin_spade;
   })
 
+  socket.on('my_profile', function(profile){
+    myProfile = profile;
+    $('.my_profile').text(myProfile.username);
+  })
+
+  socket.on('get_opponent_profile', function(profile){
+    opponentProfile = profile;
+    $('.opponent_profile').text(opponentProfile.username);
+  })
+
   socket.on('room_ready', function(){
     $('.waiting').addClass('hidden');
     $('.ready_room').removeClass('hidden');
+    socket.emit('send_my_profile', myProfile);
   })
 
   socket.on('get_opponent', function(card){
