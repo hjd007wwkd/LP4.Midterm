@@ -1,12 +1,10 @@
 .game_container {
-  width: 500px;
-  height: 700px;
-  margin: auto;
+  height: 100%;
   padding: 20px;
   background-image: url('img/wooden_background.png');
 }
 
-.label, .point {
+.label_both, .point {
   width: 100%;
 }
 
@@ -69,6 +67,7 @@
 
 .waiting {
   height: 100%;
+  width: 100%;
   text-align: center;
 }
 
@@ -115,7 +114,7 @@
 
 
 /*Waiting animation*/
-.container {
+.waiting_ani_container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -123,17 +122,17 @@
   overflow: hidden;
 }
 
-ul {
+.waiting_ani_container ul {
   display: flex;
 }
-ul li {
+.waiting_ani_container ul li {
   width: 20px;
   height: 20px;
   margin: 10px;
   list-style-type: none;
   transition: 0.5s all ease;
 }
-ul li:nth-child(1) {
+.waiting_ani_container ul li:nth-child(1) {
   animation: right-1 1s infinite alternate;
   background-color: #ddd8b8;
   animation-delay: 100ms;
@@ -146,7 +145,7 @@ ul li:nth-child(1) {
     transform: translateY(60px);
   }
 }
-ul li:nth-child(2) {
+.waiting_ani_container ul li:nth-child(2) {
   animation: right-2 1s infinite alternate;
   background-color: #b3cbb9;
   animation-delay: 200ms;
@@ -159,7 +158,7 @@ ul li:nth-child(2) {
     transform: translateY(70px);
   }
 }
-ul li:nth-child(3) {
+.waiting_ani_container ul li:nth-child(3) {
   animation: right-3 1s infinite alternate;
   background-color: #84a9c0;
   animation-delay: 300ms;
@@ -172,7 +171,7 @@ ul li:nth-child(3) {
     transform: translateY(80px);
   }
 }
-ul li:nth-child(4) {
+.waiting_ani_container ul li:nth-child(4) {
   animation: right-4 1s infinite alternate;
   background-color: #6a66a3;
   animation-delay: 400ms;
@@ -185,7 +184,7 @@ ul li:nth-child(4) {
     transform: translateY(90px);
   }
 }
-ul li:nth-child(5) {
+.waiting_ani_container ul li:nth-child(5) {
   animation: right-5 1s infinite alternate;
   background-color: #58548e;
   animation-delay: 500ms;

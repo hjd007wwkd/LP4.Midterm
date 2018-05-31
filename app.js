@@ -43,6 +43,7 @@ io.on('connection', function(socket){
 
     socket.room = room_title;
     io.to(socket.id).emit('spade', io.sockets.adapter.rooms[room_title].spade);
+    io.in(socket.room).emit('Userconnect', socket.id.substr(0, 4));
   })
 
   socket.on('ready', function(ready) {
@@ -52,6 +53,15 @@ io.on('connection', function(socket){
   socket.on('choice_mine', function(card){
     socket.to(socket.room).emit('get_opponent', card);
   })
+
+  socket.on('disconnect', function(){
+    io.in(socket.room).emit('disconnect', socket.id.substr(0, 4));
+  })
+
+  socket.on('send message', function(text){
+    socket.to(socket.room).emit('message', text);
+    io.to(socket.id).emit('myMessage', text);
+  });
 });
 
 http.listen(PORT, function(){
