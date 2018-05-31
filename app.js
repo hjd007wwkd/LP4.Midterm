@@ -29,13 +29,6 @@ app.use(cookieSession({
 app.set("view engine", "ejs");
 app.use(express.static(__dirname+"/public"));
 
-let currentUsername;
-
-app.use(function(req, res, next){
-  currentUsername = req.session.username;
-  next();
-})
-
 app.use(mainRoomRoutes);
 app.use(userRoutes);
 
@@ -52,10 +45,10 @@ function shuffle(cards) {
 }
 
 io.on('connection', function(socket){
-  socket.on('join', function(room_title){
+  socket.on('join', function(room_title, username){
     room_title = io.sockets.adapter.rooms.title
 
-    knex.select('users.username', 'scores.wins', 'scores.losses', 'scores.draws', 'scores.total_score').from('users').innerJoin('scores', 'users.id', '=', 'scores.user_id').where('users.username', currentUsername).then(function(data){
+    knex.select('users.username', 'scores.wins', 'scores.losses', 'scores.draws', 'scores.total_score').from('users').innerJoin('scores', 'users.id', '=', 'scores.user_id').where('users.username', username).then(function(data){
       io.to(socket.id).emit('my_profile', data[0]);
       if(io.sockets.adapter.rooms[room_title] && io.sockets.adapter.rooms[room_title].active === 'active') {
         socket.join(room_title);
@@ -74,8 +67,9 @@ io.on('connection', function(socket){
       }
 
       socket.room = room_title;
+      socket.userId = username;
       io.to(socket.id).emit('spade', io.sockets.adapter.rooms[room_title].spade);
-      io.in(socket.room).emit('Userconnect', currentUsername ? currentUsername : socket.id.substr(0, 4));
+      io.in(socket.room).emit('Userconnect', socket.userId ? socket.userId : socket.id.substr(0, 4));
     }).finally(function(){
       console.log('finished!!')
     });
@@ -94,7 +88,13 @@ io.on('connection', function(socket){
   })
 
   socket.on('disconnect', function(){
-    io.in(socket.room).emit('disconnect', currentUsername ? currentUsername : socket.id.substr(0, 4));
+    socket.to(socket.room).emit('clear', socket.userId ? socket.userId : socket.id.substr(0, 4));
+    socket.leave(socket.room);
+  })
+
+  socket.on('restart', function(){
+    socket.to(socket.room).emit('clear', socket.userId ? socket.userId : socket.id.substr(0, 4));
+    socket.leave(socket.room);
   })
 
   socket.on('send message', function(text){

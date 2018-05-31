@@ -9,5 +9,7 @@ body {
 }
 
 .row {
-  height: 94%;
+  height: 92%;
+  margin: 0;
+  margin-top: 9%;
 }
