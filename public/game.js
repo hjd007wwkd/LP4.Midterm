@@ -141,7 +141,7 @@ $(document).ready(function() {
         $('.choice').append(`<img src="img/heart_${checkCard.mine}.png"/>`);
         setTimeout(function(){
           checkForNextRound();
-        }, 2000)
+        }, 1000)
       }, 1000);
     }
   }
