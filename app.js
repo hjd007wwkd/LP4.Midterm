@@ -3,13 +3,89 @@ const app = express()
 const PORT = process.env.PORT || 8080;
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+const bodyParser = require("body-parser");
+const bcrypt = require('bcryptjs');
+const cookieSession = require('cookie-session');
+var knex = require('knex')({
+  client: 'postgresql',
+  connection: {
+    user : 'labber',
+    password : 'labber',
+    database : 'midterm'
+  },
+  migrations: {
+    tableName: 'knex_migrations'
+  }
+});
+
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieSession({
+  name: 'session',
+  keys: ["secret"]
+}));
 
 app.set("view engine", "ejs");
 app.use(express.static(__dirname+"/public"));
 
 app.get('/', (req, res) => {
-  res.render('game');
+  if(req.session.username){
+    res.render('game');
+  } else {
+    res.redirect('/login');
+  }
+
 });
+
+app.get('/login', (req, res) => {
+  res.render('login_page');
+})
+
+app.post('/login', (req, res) => {
+  const username = req.body.username;
+  knex.select('username', 'password').from('users').where('username', username).then(function(data){
+    if(data.length === 0 ){
+      console.log('username is not existing');
+      res.redirect('/login');
+    } else {
+      if(bcrypt.compareSync(req.body.password, data[0].password)){
+        req.session.username = username;
+        res.redirect('/');
+      } else {
+        console.log('Wrong password');
+        res.redirect('/login')
+      }
+    }
+  })
+
+})
+
+app.get('/register', (req, res) => {
+  res.render('register_page');
+})
+
+app.post('/register', (req, res) => {
+  const username = req.body.username;
+  const password = bcrypt.hashSync(req.body.password, 10);
+  knex.select('username').from('users').where('username', username).then(function(data){
+    if(data.length === 0 ){
+      knex.insert({username: username, password: password}).into('users').then(function(){
+        knex.insert({total_score: 0, wins: 0, losses: 0, draw: 0, user_id: knex.select('id').from('users').where('username', username)}).into('scores').finally(function(){
+          console.log('finished!');
+          req.session.username = username;
+          res.redirect('/');
+        })
+      })
+    } else {
+      console.log('There is existing username!');
+      res.redirect('/register');
+    }
+  })
+})
+
+app.get('/logout', (req, res) => {
+  req.session = null;
+  res.redirect('/login')
+})
 
 function shuffle(cards) {
     let randomNumber, card;
