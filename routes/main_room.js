@@ -8,7 +8,7 @@ module.exports = function(knex) {
     if(req.session.username){
       res.render('main_room', {username: req.session.username});
     } else {
-      res.redirect('/login');
+      res.render('front-page');
     }
   });
 

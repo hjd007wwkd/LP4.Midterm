@@ -1,0 +1,32 @@
+html {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  height: 100%;
+  margin: 0
+}
+
+section {
+  background-image: url("https://image.freepik.com/free-photo/3d-render-of-spotlights-on-a-grunge-brick-wall_1048-6284.jpg");
+  text-align: center;
+  height: 100%;
+  display: table;
+  width: 100%;
+  transition: 500ms;
+}
+
+div {
+  display: table-cell;
+  vertical-align: middle;
+  color: white
+}
+
+.hidden {
+  opacity: 0;
+}
+
+.yes a {
+  text-decoration: none;
+}
