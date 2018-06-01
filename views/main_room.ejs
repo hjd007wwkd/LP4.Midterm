@@ -12,8 +12,10 @@
   <link rel="stylesheet" href="/styles/chatting.css" type="text/css" />
   <link rel="stylesheet" href="/styles/profile.css" type="text/css" />
   <link rel="stylesheet" href="/styles/rank.css" type="text/css" />
+  <link rel="stylesheet" href="/styles/side_bar.css" type="text/css" />
   <script type="text/javascript" src="scripts/main_room.js"></script>
   <script type="text/javascript" src="scripts/rank.js"></script>
+  <script type="text/javascript" src="scripts/sidebar.js"></script>
   <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
@@ -37,16 +39,28 @@
     </div>
   </nav>
 
+  <div class='chatting_container chat_side_bar'>
+    <div class='chat_log'></div>
+    <form class="chat_form">
+      <input class="message" name="message" type="text">
+      <input type="submit" class="chat" value="Send"/>
+    </form>
+  </div>
+  <div class='profile_container prof_side_bar'>
+    <div class='my_profile'></div>
+    <div class='opponent_profile'></div>
+  </div>
+
   <div class="row">
-    <div class='chatting_container col-xs-3 col-md-3'>
+    <div class='chatting_container col-xs-12 col-sm-3'>
       <div class='chat_log'></div>
       <form class="chat_form">
-        <input class="message" type="text">
+        <input class="message" name="message" type="text">
         <input type="submit" class="chat" value="Send"/>
       </form>
     </div>
-    <div class='game_container col-xs-7 col-md-7'></div>
-    <div class='profile_container col-xs-2 col-md-2'>
+    <div class='game_container col-xs-12 col-sm-7'></div>
+    <div class='profile_container col-xs-12 col-sm-2'>
       <div class='my_profile'></div>
       <div class='opponent_profile'></div>
     </div>

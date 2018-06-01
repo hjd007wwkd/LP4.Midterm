@@ -5,9 +5,36 @@
 
 .my_profile {
   height: 50%;
+  padding: 10px;
   border-bottom: 1px solid rgba(0,0,0,0.3);
+  overflow-x: auto;
+}
+
+.my_profile p.side-label, .opponent_profile p.side-label {
+  text-decoration: underline;
+  margin-top: 15px;
+  margin-bottom: 0;
 }
 
 .opponent_profile {
   height: 50%;
+  padding: 10px;
+  overflow-x: auto;
+}
+
+.prof_side_bar {
+  padding-top: 50px;
+  position: fixed;
+  right: 0px;
+  width: 30%;
+  z-index: 1;
+  display: none;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+}
+
+@media(max-width: 768px) {
+  .profile_container {
+    display: none;
+  }
 }

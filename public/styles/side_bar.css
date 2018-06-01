@@ -1,0 +1,23 @@
+.side_button {
+  width: 100%;
+  text-align: center;
+  display: none;
+}
+
+.chat_button, .prof_button {
+  display: inline-block;
+  font-size: 20px;
+  padding: 10px;
+  text-shadow: 3px 3px rgba(80,80,80,0.5);
+}
+
+.chat_button:hover, .prof_button:hover {
+  cursor: pointer;
+  text-shadow: 1px 1px rgba(80,80,80,0.5);
+}
+
+@media(max-width: 768px) {
+  .side_button {
+    display: block;
+  }
+}

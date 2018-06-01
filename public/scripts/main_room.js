@@ -27,6 +27,19 @@ function start() {
   const opponent = $('<div>').addClass('opponent');
   const spade = $('<div>').addClass('spade');
   const choice = $('<div>').addClass('choice');
+  const selected_card_choice = $('<div>').addClass('selected_card');
+  const side_choice = $('<div>').addClass('side front');
+  const side_back_choice = $('<div>').addClass('side back');
+  selected_card_choice.append(side_choice).append(side_back_choice);
+
+  const selected_card_opponent = $('<div>').addClass('selected_card');
+  const side_opponent = $('<div>').addClass('side front');
+  const side_back_opponent = $('<div>').addClass('side back');
+  selected_card_opponent.append(side_opponent).append(side_back_opponent);
+
+  choice.append(selected_card_choice);
+  opponent.append(selected_card_opponent);
+
   const mine = $('<div>').addClass('mine');
   for(let i = 1; i <= 13; i++){
     const card = $('<div>').attr('data-card', i);
@@ -34,6 +47,7 @@ function start() {
     card.append(img);
     mine.append(card);
   }
+
   main.append(label).append(point).append(opponent).append(spade).append(choice).append(mine);
 
   const end = $('<div>').addClass('end hidden');
@@ -41,7 +55,12 @@ function start() {
   const restart = $('<div>').addClass('restart').text('Restart');
   end.append(result).append(restart);
 
-  $('.game_container').append(waiting).append(ready_room).append(main).append(end);
+  const side_button = $('<div>').addClass('side_button');
+  const chat_button = $('<p>').addClass('chat_button').text('Chat');
+  const prof_button = $('<p>').addClass('prof_button').text('Profile');
+  side_button.append(chat_button).append(prof_button);
+
+  $('.game_container').append(waiting).append(ready_room).append(main).append(end).append(side_button);
 }
 
 $(document).ready(function() {
@@ -112,10 +131,10 @@ $(document).ready(function() {
     $('.mine div').on('click', function(){
       const card = $(this).attr('data-card');
       socket.emit('choice_mine', card);
-      $('.choice img').remove()
       $('.mine div').off('click');
-      $('.choice').append(`<img src="img/cover.png"/>`);
       checkCard.mine = Number(card);
+      $('.choice .front').append(`<img src="img/cover.png"/>`);
+      $('.choice .back').append(`<img src="img/heart_${checkCard.mine}.png"/>`)
       $(this).remove();
       setTime()
     })
@@ -143,14 +162,12 @@ $(document).ready(function() {
   function setTime() {
     if(checkCard.mine && checkCard.opponent){
       setTimeout(function(){
-        $('.opponent').empty();
-        $('.choice').empty();
-        $('.opponent').append(`<img src="img/diamond_${checkCard.opponent}.png"/>`);
-        $('.choice').append(`<img src="img/heart_${checkCard.mine}.png"/>`);
+        $('.selected_card').addClass('flip')
         setTimeout(function(){
           checkForNextRound();
-        }, 0)
-      }, 0);
+          $('.selected_card').removeClass('flip')
+        }, 2000)
+      }, 1000);
     }
   }
 
@@ -165,12 +182,17 @@ $(document).ready(function() {
   }
 
   function makeProfile(whos, variable){
-    const username = $('<p>').text(`Username: ${variable.username}`);
-    const totalScore = $('<p>').text(`Total Score: ${variable.total_score}`);
-    const wins = $('<p>').text(`Wins: ${variable.wins}`);
-    const losses = $('<p>').text(`Losses: ${variable.losses}`);
-    const draws = $('<p>').text(`Draws: ${variable.draws}`);
-    $(whos).append(username).append(totalScore).append(wins).append(losses).append(draws);
+    const username_label = $('<p>').text('Username').addClass('side-label');
+    const username = $('<p>').text(variable.username);
+    const totalScore_label = $('<p>').text('Total Score').addClass('side-label');
+    const totalScore = $('<p>').text(variable.total_score);
+    const wins_label = $('<p>').text('Wins').addClass('side-label');
+    const wins = $('<p>').text(variable.wins);
+    const losses_label = $('<p>').text('Losses').addClass('side-label');
+    const losses = $('<p>').text(variable.losses);
+    const draws_label = $('<p>').text('Draws').addClass('side-label');
+    const draws = $('<p>').text(variable.draws);
+    $(whos).append(username_label).append(username).append(totalScore_label).append(totalScore).append(wins_label).append(wins).append(losses_label).append(losses).append(draws_label).append(draws);
   }
 
   socket.on('my_profile', function(profile){
@@ -200,7 +222,8 @@ $(document).ready(function() {
   })
 
   socket.on('get_opponent', function(card){
-    $('.opponent').append(`<img src="img/cover.png"/>`);
+    $('.opponent .front').append(`<img src="img/cover.png"/>`);
+    $('.opponent .back').append(`<img src="img/diamond_${card}.png"/>`)
     checkCard.opponent = Number(card);
     setTime();
   })
@@ -221,7 +244,7 @@ $(document).ready(function() {
 
   $('.chat_form').on('submit', function(e){
     e.preventDefault();
-    socket.emit('send message', $('.message').val());
+    socket.emit('send message', $(e.target.message).val());
     $('.message').val("");
     $(".message").focus();
   });
