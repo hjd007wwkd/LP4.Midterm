@@ -1,32 +1,32 @@
 html {
-    height: 100%
-  }
-  
-  body {
-    height: 100%
-  }
-  
-  section {
-    text-align: center;
-    height: 100%;
-    display: table;
-    width: 100%;
-    transition: 500ms;
-  }
-  
-  div {
-    display: table-cell;
-    vertical-align: middle;
-  }
+  height: 100%
+}
 
-  input {
-      margin-bottom: 5px
-  }
+body {
+  height: 100%
+}
 
-  h2 {
-      margin-bottom: 3px;
-  }
+section {
+  text-align: center;
+  height: 100%;
+  display: table;
+  width: 100%;
+  transition: 500ms;
+}
 
-  .hidden {
-    opacity: 0
-  }
+div {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+input {
+    margin-bottom: 5px
+}
+
+h2 {
+    margin-bottom: 3px;
+}
+
+.hidden {
+  opacity: 0
+}
