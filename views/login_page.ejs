@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>login</title>
+    <link rel="stylesheet" href="/styles/login_page.css" />
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  </head>
+  <body>
+
+    <section class="hidden">
+      <div>
+        <form action="/login" method="POST">
+          <h2>Login</h2>
+          <input type="username" name="username" placeholder="Username" required />
+          <br/>
+          <input type="password" name="password" placeholder="Password" required />
+          <br/>
+          <input type="submit" value="Login">
+        </form>
+        <a href="/register">Register</a>
+      </div>
+    </section>
+  </body>
+  <script>
+    $(document).ready(function () {
+      $('section').removeClass('hidden');
+    });
+  </script>
+</html>
