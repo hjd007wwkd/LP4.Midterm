@@ -55,7 +55,7 @@ $(document).ready(function() {
   let myProfile;
   let opponentProfile;
 
-  socket.emit('join', 1);
+  socket.emit('join', 1, $('.navbar-text').text());
 
   start();
 
@@ -65,8 +65,11 @@ $(document).ready(function() {
     checkReady = [];
     myPoint = 0;
     opponentPoint = 0;
+    $('.opponent_profile').empty();
+    $('.my_profile').empty();
     $('.game_container').empty();
     $('.chat_log').empty();
+    socket.emit('restart');
   }
 
   function result() {
@@ -154,32 +157,40 @@ $(document).ready(function() {
   function postScore(status, score) {
     $.post("/score", {'status': status, 'score': score})
     .done(function(data){
-      //successfully deleted message
-      alertMessage("11");
+      console.log('success')
     })
     .fail(function(error) {
       console.log(error);
     })
   }
 
-  $('.game_container').on('click', '.restart', function() {
-    clear();
-    start();
-    socket.emit('join', 1);
-  })
-
-  socket.on('spade', function(begin_spade){
-    spade = begin_spade;
-  })
+  function makeProfile(whos, variable){
+    const username = $('<p>').text(`Username: ${variable.username}`);
+    const totalScore = $('<p>').text(`Total Score: ${variable.total_score}`);
+    const wins = $('<p>').text(`Wins: ${variable.wins}`);
+    const losses = $('<p>').text(`Losses: ${variable.losses}`);
+    const draws = $('<p>').text(`Draws: ${variable.draws}`);
+    $(whos).append(username).append(totalScore).append(wins).append(losses).append(draws);
+  }
 
   socket.on('my_profile', function(profile){
     myProfile = profile;
-    $('.my_profile').text(myProfile.username);
+    makeProfile('.my_profile', myProfile);
   })
 
   socket.on('get_opponent_profile', function(profile){
     opponentProfile = profile;
-    $('.opponent_profile').text(opponentProfile.username);
+    makeProfile('.opponent_profile', opponentProfile);
+  })
+
+  $('.game_container').on('click', '.restart', function() {
+    clear();
+    start();
+    socket.emit('join', 1, $('.navbar-text').text());
+  })
+
+  socket.on('spade', function(begin_spade){
+    spade = begin_spade;
   })
 
   socket.on('room_ready', function(){
@@ -198,7 +209,8 @@ $(document).ready(function() {
     checkReady.push(1);
     socket.emit('ready', 1);
     checkIfReady();
-    $('.ready').off('click');
+    $('.opponent_ready').text('Waiting for opponent ready');
+    $('.ready').css('display', 'none');
   })
 
   socket.on('opponent_ready', function(ready){
@@ -224,9 +236,10 @@ $(document).ready(function() {
     $('.chat_log').scrollTop($('.chat_log')[0].scrollHeight);
   });
 
-  socket.on('disconnect', function(name){
+  socket.on('clear', function(name){
     $('.chat_log').append("<p class=\"disconnect\">"+name+" disconnected"+"</p>");
-  });
+    $('.opponent_profile').empty();
+  })
 
   socket.on('Userconnect', function(name){
     $('.chat_log').append("<p class=\"connect\">"+name+" connected"+"</p>");

@@ -34,6 +34,14 @@ module.exports = function(knex) {
     })
   })
 
+  routes.get('/score', (req, res) => {
+    knex.select('users.username', 'scores.total_score', 'scores.wins', 'scores.losses', 'scores.draws').from('users').innerJoin('scores', 'scores.user_id', '=', 'users.id').orderBy('scores.total_score', 'desc').then(function(data){
+      res.send(data);
+    }).catch(function(err){
+      console.log(err);
+    })
+  })
+
   return routes;
 
 };
