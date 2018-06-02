@@ -33,22 +33,29 @@ module.exports = function(knex) {
   })
 
   routes.post('/register', (req, res) => {
-    const username = req.body.username;
-    const password = bcrypt.hashSync(req.body.password, 10);
-    knex.select('username').from('users').where('username', username).then(function(data){
-      if(data.length === 0 ){
-        knex.insert({username: username, password: password}).into('users').then(function(){
-          knex.insert({total_score: 0, wins: 0, losses: 0, draws: 0, user_id: knex.select('id').from('users').where('username', username)}).into('scores').finally(function(){
-            console.log('finished!');
-            req.session.username = username;
-            res.redirect('/');
+    const username = req.body.username.trim();
+    const originalPassword = req.body.password.trim()
+
+    if(username && originalPassword) {
+      const password = bcrypt.hashSync(originalPassword, 10);
+      knex.select('username').from('users').where('username', username).then(function(data){
+        if(data.length === 0 ){
+          knex.insert({username: username, password: password}).into('users').then(function(){
+            knex.insert({total_score: 0, wins: 0, losses: 0, draws: 0, user_id: knex.select('id').from('users').where('username', username)}).into('scores').finally(function(){
+              console.log('finished!');
+              req.session.username = username;
+              res.redirect('/');
+            })
           })
-        })
-      } else {
-        console.log('There is existing username!');
-        res.redirect('/register');
-      }
-    })
+        } else {
+          console.log('There is existing username!');
+          res.redirect('/register');
+        }
+      })
+    } else {
+      console.log('username or password cannot be empty');
+      res.redirect('/register');
+    }
   })
 
   routes.get('/logout', (req, res) => {
