@@ -43,7 +43,7 @@ function start() {
   const mine = $('<div>').addClass('mine');
   for(let i = 1; i <= 13; i++){
     const card = $('<div>').attr('data-card', i);
-    const img = $(`<img src='img/heart_${i}.png'>`);
+    const img = $(`<img src='/img/heart_${i}.png'>`);
     card.append(img);
     mine.append(card);
   }
@@ -52,7 +52,7 @@ function start() {
 
   const end = $('<div>').addClass('end hidden');
   const result = $('<div>').addClass('result');
-  const restart = $('<div>').addClass('restart').text('Restart');
+  const restart = $('<div>').addClass('restart').text('Restart');;
   end.append(result).append(restart);
 
   const side_button = $('<div>').addClass('side_button');
@@ -64,31 +64,13 @@ function start() {
 }
 
 $(document).ready(function() {
-  const socket = io();
-  let spade;
-  let currentSpade;
-  let checkCard = {mine: 0, opponent: 0};
-  let checkReady = [];
-  let myPoint = 0;
-  let opponentPoint = 0;
-  let myProfile;
-  let opponentProfile;
-
-  socket.emit('join', 1, $('.navbar-text').text());
-
-  start();
-
   function clear() {
     checkCard.mine = 0;
     checkCard.opponent = 0;
     checkReady = [];
     myPoint = 0;
     opponentPoint = 0;
-    $('.opponent_profile').empty();
-    $('.my_profile').empty();
     $('.game_container').empty();
-    $('.chat_log').empty();
-    socket.emit('restart');
   }
 
   function result() {
@@ -116,7 +98,7 @@ $(document).ready(function() {
   function setSpade() {
     if(spade.length !== 0) {
       $('.spade img').remove()
-      $('.spade').append(`<img src="img/spade_${spade[0]}.png"/>`);
+      $('.spade').append(`<img src="/img/spade_${spade[0]}.png"/>`);
       currentSpade = spade.shift();
       onClicked();
     } else {
@@ -133,8 +115,8 @@ $(document).ready(function() {
       socket.emit('choice_mine', card);
       $('.mine div').off('click');
       checkCard.mine = Number(card);
-      $('.choice .front').append(`<img src="img/cover.png"/>`);
-      $('.choice .back').append(`<img src="img/heart_${checkCard.mine}.png"/>`)
+      $('.choice .front').append(`<img src="/img/cover.png"/>`);
+      $('.choice .back').append(`<img src="/img/heart_${checkCard.mine}.png"/>`)
       $(this).remove();
       setTime()
     })
@@ -195,6 +177,30 @@ $(document).ready(function() {
     $(whos).append(username_label).append(username).append(totalScore_label).append(totalScore).append(wins_label).append(wins).append(losses_label).append(losses).append(draws_label).append(draws);
   }
 
+  start();
+
+  const socket = io();
+  let spade;
+  let currentSpade;
+  let checkCard = {mine: 0, opponent: 0};
+  let checkReady = [];
+  let myPoint = 0;
+  let opponentPoint = 0;
+  let myProfile;
+  let opponentProfile;
+
+  const id = $('.game_container').attr('data-id');
+
+  if(id){
+    socket.emit('join', id, $('.navbar-text').text());
+    socket.emit('shuffle_spade');
+  } else {
+    socket.emit('join', 1, $('.navbar-text').text());
+    socket.emit('shuffle_spade');
+    $('.restart').text('');
+    $('.restart').append('<a href="/">Restart</a>')
+  }
+
   socket.on('my_profile', function(profile){
     myProfile = profile;
     makeProfile('.my_profile', myProfile);
@@ -203,12 +209,6 @@ $(document).ready(function() {
   socket.on('get_opponent_profile', function(profile){
     opponentProfile = profile;
     makeProfile('.opponent_profile', opponentProfile);
-  })
-
-  $('.game_container').on('click', '.restart', function() {
-    clear();
-    start();
-    socket.emit('join', 1, $('.navbar-text').text());
   })
 
   socket.on('spade', function(begin_spade){
@@ -222,10 +222,22 @@ $(document).ready(function() {
   })
 
   socket.on('get_opponent', function(card){
-    $('.opponent .front').append(`<img src="img/cover.png"/>`);
-    $('.opponent .back').append(`<img src="img/diamond_${card}.png"/>`)
+    $('.opponent .front').append(`<img src="/img/cover.png"/>`);
+    $('.opponent .back').append(`<img src="/img/diamond_${card}.png"/>`)
     checkCard.opponent = Number(card);
     setTime();
+  })
+
+  $('.game_container').on('click', '.restart', function(){
+    if(opponentProfile) {
+      clear();
+      start();
+      $('.waiting').addClass('hidden');
+      $('.ready_room').removeClass('hidden');
+      socket.emit('shuffle_spade');
+    } else {
+      $('.chat_log').append("<p class=\"disconnect\">No one to play with in the room!!</p>");
+    }
   })
 
   $('.game_container').on('click', '.ready', function() {
@@ -233,7 +245,7 @@ $(document).ready(function() {
     socket.emit('ready', 1);
     checkIfReady();
     $('.opponent_ready').text('Waiting for opponent ready');
-    $('.ready').css('display', 'none');
+    $('.ready').addClass('hidden');
   })
 
   socket.on('opponent_ready', function(ready){
@@ -259,14 +271,34 @@ $(document).ready(function() {
     $('.chat_log').scrollTop($('.chat_log')[0].scrollHeight);
   });
 
-  socket.on('clear', function(name){
-    $('.chat_log').append("<p class=\"disconnect\">"+name+" disconnected"+"</p>");
-    $('.opponent_profile').empty();
-  })
-
   socket.on('Userconnect', function(name){
+    $('.end').addClass('hidden');
     $('.chat_log').append("<p class=\"connect\">"+name+" connected"+"</p>");
   });
+
+  socket.on('disconnect', function(name){
+    if($( ".end" ).hasClass( "hidden" ) && !$( ".main" ).hasClass( "hidden" )){
+      postScore('wins', myPoint)
+    }
+    clear();
+    start();
+    if(!id){
+      $('.restart').text('');
+      $('.restart').append('<a href="/">Restart</a>')
+    }
+    $('.waiting').addClass('hidden');
+    $('.ready_room').addClass('hidden');
+    $('.main').addClass('hidden');
+    $('.end').removeClass('hidden');
+    $('.chat_log').append("<p class=\"disconnect\">"+name+"</p>");
+    $('.opponent_profile').empty();
+    opponentProfile = '';
+  })
+
+  socket.on('blank', function(){
+    clear();
+    $('.profile_container').remove();
+  })
 })
 
 

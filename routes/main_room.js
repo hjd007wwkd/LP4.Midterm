@@ -6,11 +6,24 @@ module.exports = function(knex) {
 
   routes.get('/', (req, res) => {
     if(req.session.username){
-      res.render('main_room', {username: req.session.username});
+      res.render('main_room', {username: req.session.username, room_id: ''});
     } else {
       res.render('front-page');
     }
   });
+
+  routes.post('/', (req, res) => {
+    const search = req.body.search.trim();
+    res.redirect('/rooms/'+search);
+  })
+
+  routes.get('/rooms/:id', (req, res) => {
+    if(req.session.username){
+      res.render('main_room', {username: req.session.username, room_id: req.params.id});
+    } else {
+      res.render('front-page');
+    }
+  })
 
   routes.post('/score', (req, res) => {
     const status = req.body.status;

@@ -11,3 +11,9 @@
 .rank:hover {
   cursor: pointer;
 }
+
+.form-control {
+  display: inline;
+  width: 70%;
+  margin-left: 14px
+}

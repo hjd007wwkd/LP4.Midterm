@@ -13,9 +13,9 @@
   <link rel="stylesheet" href="/styles/profile.css" type="text/css" />
   <link rel="stylesheet" href="/styles/rank.css" type="text/css" />
   <link rel="stylesheet" href="/styles/side_bar.css" type="text/css" />
-  <script type="text/javascript" src="scripts/main_room.js"></script>
-  <script type="text/javascript" src="scripts/rank.js"></script>
-  <script type="text/javascript" src="scripts/sidebar.js"></script>
+  <script type="text/javascript" src="/scripts/main_room.js"></script>
+  <script type="text/javascript" src="/scripts/rank.js"></script>
+  <script type="text/javascript" src="/scripts/sidebar.js"></script>
   <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
@@ -31,6 +31,10 @@
       </div>
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav navbar-right">
+            <form action='/' method='POST' class="navbar-form navbar-right">
+              <input type="text" class="form-control" name='search' placeholder="Search">
+              <button type="submit" class="search_btn btn btn-default">Search</button>
+            </form>
             <span class="navbar-text username_style"><%=username%></span>
             <li><a href="/logout">Logout</a></li>
             <li><a class='rank'>Rank</a></li>
@@ -59,7 +63,7 @@
         <input type="submit" class="chat" value="Send"/>
       </form>
     </div>
-    <div class='game_container col-xs-12 col-sm-7'></div>
+    <div data-id='<%=room_id%>' class='game_container col-xs-12 col-sm-7'></div>
     <div class='profile_container col-xs-12 col-sm-2'>
       <div class='my_profile'></div>
       <div class='opponent_profile'></div>

@@ -46,29 +46,46 @@ function shuffle(cards) {
 
 io.on('connection', function(socket){
   socket.on('join', function(room_title, username){
-    room_title = io.sockets.adapter.rooms.title
 
     knex.select('users.username', 'scores.wins', 'scores.losses', 'scores.draws', 'scores.total_score').from('users').innerJoin('scores', 'users.id', '=', 'scores.user_id').where('users.username', username).then(function(data){
       io.to(socket.id).emit('my_profile', data[0]);
-      if(io.sockets.adapter.rooms[room_title] && io.sockets.adapter.rooms[room_title].active === 'active') {
-        socket.join(room_title);
-        io.sockets.adapter.rooms[room_title].active = 'done'
-        io.in(room_title).emit('room_ready');
-      } else {
-        if(!room_title) {
+      if(!io.sockets.adapter.rooms.title) {
           io.sockets.adapter.rooms.title = 1;
-        } else {
-          io.sockets.adapter.rooms.title += 1;
-        }
-        room_title = io.sockets.adapter.rooms.title;
-        socket.join(room_title);
-        io.sockets.adapter.rooms[room_title].active = 'active';
-        io.sockets.adapter.rooms[room_title].spade = shuffle([1,2,3,4,5,6,7,8,9,10,11,12,13]);
       }
 
-      socket.room = room_title;
+      if(room_title !== 1){
+        if(io.sockets.adapter.rooms[room_title] && io.sockets.adapter.rooms[room_title].length >= 2){
+          socket.join('NoWhere');
+          io.to(socket.id).emit('blank')
+          io.in(socket.room).emit('disconnect', "The room was full!!. Search other one");
+          socket.room = 'NoWhere';
+        } else {
+          socket.join(room_title);
+          if(io.sockets.adapter.rooms[room_title].length === 2){
+            io.in(room_title).emit('room_ready');
+          }
+          socket.room = room_title;
+        }
+      } else {
+        if(io.sockets.adapter.rooms[io.sockets.adapter.rooms.title] && io.sockets.adapter.rooms[io.sockets.adapter.rooms.title].active === 'active') {
+          socket.join(io.sockets.adapter.rooms.title);
+          io.sockets.adapter.rooms[io.sockets.adapter.rooms.title].active = 'done'
+          io.in(io.sockets.adapter.rooms.title).emit('room_ready');
+        } else {
+          io.sockets.adapter.rooms.title += 1;
+          socket.join(io.sockets.adapter.rooms.title);
+          io.sockets.adapter.rooms[io.sockets.adapter.rooms.title].active = 'active';
+        }
+        socket.room = io.sockets.adapter.rooms.title;
+      }
+
+      socket.on('shuffle_spade', function(){
+        io.sockets.adapter.rooms[socket.room].spade = shuffle([1,2,3,4,5,6,7,8,9,10,11,12,13]);
+        io.in(socket.room).emit('spade', io.sockets.adapter.rooms[socket.room].spade);
+      })
+
       socket.userId = username;
-      io.to(socket.id).emit('spade', io.sockets.adapter.rooms[room_title].spade);
+      io.to(socket.id).emit('spade', io.sockets.adapter.rooms[socket.room].spade);
       io.in(socket.room).emit('Userconnect', socket.userId ? socket.userId : socket.id.substr(0, 4));
     }).finally(function(){
       console.log('finished!!')
@@ -88,12 +105,7 @@ io.on('connection', function(socket){
   })
 
   socket.on('disconnect', function(){
-    socket.to(socket.room).emit('clear', socket.userId ? socket.userId : socket.id.substr(0, 4));
-    socket.leave(socket.room);
-  })
-
-  socket.on('restart', function(){
-    socket.to(socket.room).emit('clear', socket.userId ? socket.userId : socket.id.substr(0, 4));
+    io.in(socket.room).emit('disconnect', `${socket.userId ? socket.userId : socket.id.substr(0, 4)} disconnected`);
     socket.leave(socket.room);
   })
 
