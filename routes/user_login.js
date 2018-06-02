@@ -6,30 +6,34 @@ const bcrypt = require('bcryptjs');
 module.exports = function(knex) {
 
   routes.get('/login', (req, res) => {
-    res.render('login_page');
+    if(!req.session.username){
+      res.render('login_page');
+    } else {
+      res.redirect('/');
+    }
   })
 
   routes.post('/login', (req, res) => {
-    const username = req.body.username;
-    knex.select('username', 'password').from('users').where('username', username).then(function(data){
-      if(data.length === 0 ){
-        console.log('username is not existing');
-        res.redirect('/login');
-      } else {
-        if(bcrypt.compareSync(req.body.password, data[0].password)){
-          req.session.username = username;
-          res.redirect('/');
+    const username = req.body.username.trim();
+    const password = req.body.password.trim();
+    if(username && password) {
+      knex.select('username', 'password').from('users').where('username', username).then(function(data){
+        if(data.length === 0 ){
+          res.send({code: 'fail', text: 'Username is not existed'});
         } else {
-          console.log('Wrong password');
-          res.redirect('/login')
+          if(bcrypt.compareSync(password, data[0].password)){
+            req.session.username = username;
+            res.send({code: 'success', text: '/'});
+          } else {
+            res.send({code: 'fail', text: 'Wrong password'});
+          }
         }
-      }
-    })
+      })
+    } else {
+      res.send({code: 'fail', text: 'Username or password cannot be empty'});
+    }
 
-  })
 
-  routes.get('/register', (req, res) => {
-    res.render('register_page');
   })
 
   routes.post('/register', (req, res) => {
@@ -42,25 +46,22 @@ module.exports = function(knex) {
         if(data.length === 0 ){
           knex.insert({username: username, password: password}).into('users').then(function(){
             knex.insert({total_score: 0, wins: 0, losses: 0, draws: 0, user_id: knex.select('id').from('users').where('username', username)}).into('scores').finally(function(){
-              console.log('finished!');
               req.session.username = username;
-              res.redirect('/');
+              res.send({code: 'success', text: '/'});
             })
           })
         } else {
-          console.log('There is existing username!');
-          res.redirect('/register');
+          res.send({code: 'fail', text: 'There is existing username!'});
         }
       })
     } else {
-      console.log('username or password cannot be empty');
-      res.redirect('/register');
+      res.send({code: 'fail', text: 'Username or password cannot be empty'});
     }
   })
 
   routes.get('/logout', (req, res) => {
     req.session = null;
-    res.redirect('/login')
+    res.redirect('/')
   })
 
   return routes;

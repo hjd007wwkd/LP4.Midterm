@@ -42,8 +42,12 @@ module.exports = function(knex) {
         }
         knex('scores').update({losses: count, total_score: totalScore}).where('user_id', knex.select('id').from('users').where('username', req.session.username)).finally(function(){
           res.send('finished');
+        }).catch(function(err){
+          res.send(err);
         })
       }
+    }).catch(function(err){
+      res.send(err);
     })
   })
 
@@ -51,7 +55,7 @@ module.exports = function(knex) {
     knex.select('users.username', 'scores.total_score', 'scores.wins', 'scores.losses', 'scores.draws').from('users').innerJoin('scores', 'scores.user_id', '=', 'users.id').orderBy('scores.total_score', 'desc').then(function(data){
       res.send(data);
     }).catch(function(err){
-      console.log(err);
+      res.send(err);
     })
   })
 
@@ -59,7 +63,7 @@ module.exports = function(knex) {
     knex.select('users.username', 'scores.wins', 'scores.losses', 'scores.draws', 'scores.total_score').from('users').innerJoin('scores', 'users.id', '=', 'scores.user_id').where('users.username', req.session.username).then(function(data){
       res.send(data);
     }).catch(function(err){
-      console.log(err);
+      res.send(err);
     })
   })
 

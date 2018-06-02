@@ -1,5 +1,5 @@
-const CARD_FLIP_DELAY = 200; // 1500
-const CARD_SHOW_DELAY = 200; // 1500
+const CARD_FLIP_DELAY = 1500; // 1500
+const CARD_SHOW_DELAY = 1500; // 1500
 
 
 //rendering base html for game container
@@ -216,7 +216,6 @@ $(document).ready(function() {
       }).fail(function(error) {
         console.log(error);
       })
-      console.log('success')
     })
     .fail(function(error) {
       console.log(error);

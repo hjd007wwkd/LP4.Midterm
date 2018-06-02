@@ -116,7 +116,6 @@ io.on('connection', function(socket){
       })
     }).finally(function(){
       socket.emit("wake up");
-      console.log('finished!!')
     });
   })
 

@@ -1,29 +1,32 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>login</title>
+    <title>The Card Game</title>
     <link rel="stylesheet" href="/styles/login_page.css" />
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="scripts/login_page.js"></script>
   </head>
   <body>
+    <div class="background_login hidden">
+      <!--alert -->
+      <div class="alert"></div>
 
-    <section class="hidden">
-      <div>
-        <form action="/login" method="POST">
-          <h2>Login</h2>
-          <input type="username" name="username" placeholder="Username" required />
-          <br/>
-          <input type="password" name="password" placeholder="Password" required />
-          <br/>
-          <input type="submit" value="Login">
-        </form>
-        <a href="/register">Register</a>
+      <div class="login_page">
+        <div class="form">
+          <form class="register_form">
+            <input type="text" name='username' placeholder="name"/>
+            <input type="password" name='password' placeholder="password"/>
+            <button>create</button>
+            <p class="message">Already registered? <a>Sign In</a></p>
+          </form>
+          <form class="login_form">
+            <input type="text" name='username' placeholder="username"/>
+            <input type="password" name='password' placeholder="password"/>
+            <button>login</button>
+            <p class="message">Not registered? <a>Create an account</a></p>
+          </form>
+        </div>
       </div>
-    </section>
+    </div>
   </body>
-  <script>
-    $(document).ready(function () {
-      $('section').removeClass('hidden');
-    });
-  </script>
 </html>
