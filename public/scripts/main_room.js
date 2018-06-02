@@ -1,3 +1,6 @@
+const CARD_FLIP_DELAY = 200; // 1500
+const CARD_SHOW_DELAY = 200; // 1500
+
 
 //rendering base html for game container
 function start() {
@@ -71,6 +74,35 @@ function start() {
 }
 
 $(document).ready(function() {
+  const socket = io();
+  start();
+
+  //current game state
+  let spade;
+  let currentSpade;
+  let checkCard = {mine: 0, opponent: 0};
+  let checkReady = [];
+  let myPoint = 0;
+  let opponentPoint = 0;
+  let myProfile;
+  let opponentProfile;
+
+  const id = $('.game_container').attr('data-id');
+
+  //if id, set private room, else, make random room
+  if(id){
+    socket.emit('join', id, $('.navbar-text').text());
+  } else {
+    socket.emit('join', 1, $('.navbar-text').text());
+    $('.restart').text('');
+    $('.restart').append('<a href="/">Restart</a>')
+  }
+
+  socket.on('wake up', function () {
+    socket.emit('shuffle_spade');
+    socket.emit('check_opponent_in');
+  })
+
   //clear all the record
   function clear() {
     checkCard.mine = 0;
@@ -167,8 +199,8 @@ $(document).ready(function() {
         setTimeout(function(){
           checkForNextRound();
           $('.selected_card').removeClass('flip')
-        }, 2000)
-      }, 1000);
+        }, CARD_SHOW_DELAY)
+      }, CARD_FLIP_DELAY);
     }
   }
 
@@ -176,6 +208,14 @@ $(document).ready(function() {
   function postScore(status, score) {
     $.post("/score", {'status': status, 'score': score})
     .done(function(data){
+      $.get("/myScore")
+      .done(function(newData){
+        myProfile = newData[0]
+        makeProfile('.my_profile', newData[0])
+        socket.emit('send_my_profile', myProfile);
+      }).fail(function(error) {
+        console.log(error);
+      })
       console.log('success')
     })
     .fail(function(error) {
@@ -195,34 +235,8 @@ $(document).ready(function() {
     const losses = $('<p>').text(variable.losses);
     const draws_label = $('<p>').text('Draws').addClass('side-label');
     const draws = $('<p>').text(variable.draws);
+    $(whos).empty();
     $(whos).append(username_label).append(username).append(totalScore_label).append(totalScore).append(wins_label).append(wins).append(losses_label).append(losses).append(draws_label).append(draws);
-  }
-
-  start();
-
-  const socket = io();
-
-  //current game state
-  let spade;
-  let currentSpade;
-  let checkCard = {mine: 0, opponent: 0};
-  let checkReady = [];
-  let myPoint = 0;
-  let opponentPoint = 0;
-  let myProfile;
-  let opponentProfile;
-
-  const id = $('.game_container').attr('data-id');
-
-  //if id, set private room, else, make random room
-  if(id){
-    socket.emit('join', id, $('.navbar-text').text());
-    socket.emit('shuffle_spade');
-  } else {
-    socket.emit('join', 1, $('.navbar-text').text());
-    socket.emit('shuffle_spade');
-    $('.restart').text('');
-    $('.restart').append('<a href="/">Restart</a>')
   }
 
   //set current my profile from database
@@ -259,15 +273,10 @@ $(document).ready(function() {
 
   //when restart button click, change game room to ready_room
   $('.game_container').on('click', '.restart', function(){
-    if(opponentProfile) {
-      clear();
-      start();
-      $('.waiting').addClass('hidden');
-      $('.ready_room').removeClass('hidden');
-      socket.emit('shuffle_spade');
-    } else {
-      $('.chat_log').append("<p class=\"disconnect\">No one to play with in the room!!</p>");
-    }
+    clear();
+    start();
+    socket.emit('shuffle_spade');
+    socket.emit('check_opponent_in');
   })
 
   //when click ready, let opponent know that
@@ -308,7 +317,6 @@ $(document).ready(function() {
 
   //notice opponent I am in the room
   socket.on('Userconnect', function(name){
-    $('.end').addClass('hidden');
     $('.chat_log').append("<p class=\"connect\">"+name+" connected"+"</p>");
   });
 

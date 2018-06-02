@@ -54,7 +54,7 @@ io.on('connection', function(socket){
 
       //set random room title at first
       if(!io.sockets.adapter.rooms.title) {
-          io.sockets.adapter.rooms.title = 1;
+        io.sockets.adapter.rooms.title = 1;
       }
 
       //private room setting
@@ -69,9 +69,6 @@ io.on('connection', function(socket){
         //get into private room
         } else {
           socket.join(room_title);
-          if(io.sockets.adapter.rooms[room_title].length === 2){
-            io.in(room_title).emit('room_ready');
-          }
           socket.room = room_title;
         }
 
@@ -81,7 +78,6 @@ io.on('connection', function(socket){
         if(io.sockets.adapter.rooms[io.sockets.adapter.rooms.title] && io.sockets.adapter.rooms[io.sockets.adapter.rooms.title].active === 'active') {
           socket.join(io.sockets.adapter.rooms.title);
           io.sockets.adapter.rooms[io.sockets.adapter.rooms.title].active = 'done'
-          io.in(io.sockets.adapter.rooms.title).emit('room_ready');
 
         //if there is no room for active, set another room
         } else {
@@ -105,7 +101,21 @@ io.on('connection', function(socket){
 
       //send all users in the room that i am in
       io.in(socket.room).emit('Userconnect', socket.userId ? socket.userId : socket.id.substr(0, 4));
+
+      //send both player ready when restart
+      socket.on('check_opponent_in', function(){
+        if(!io.sockets.adapter.rooms[socket.room].ready){
+          //store both player ready status
+          io.sockets.adapter.rooms[socket.room].ready = []
+        }
+        io.sockets.adapter.rooms[socket.room].ready.push(1);
+        if(io.sockets.adapter.rooms[socket.room].ready.length === 2) {
+          io.in(socket.room).emit('room_ready');
+          io.sockets.adapter.rooms[socket.room].ready = [];
+        }
+      })
     }).finally(function(){
+      socket.emit("wake up");
       console.log('finished!!')
     });
   })
@@ -127,6 +137,9 @@ io.on('connection', function(socket){
 
   //send if i am disconnect from room
   socket.on('disconnect', function(){
+    if(io.sockets.adapter.rooms[socket.room]){
+      io.sockets.adapter.rooms[socket.room].ready = [];
+    }
     io.in(socket.room).emit('disconnect', `${socket.userId ? socket.userId : socket.id.substr(0, 4)} disconnected`);
     socket.leave(socket.room);
   })
