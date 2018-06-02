@@ -43,6 +43,7 @@
     </div>
   </nav>
 
+  <!-- side bar for chat and profile -->
   <div class='chatting_container chat_side_bar'>
     <div class='chat_log'></div>
     <form class="chat_form">
@@ -56,6 +57,7 @@
   </div>
 
   <div class="row">
+    <!-- chatting room -->
     <div class='chatting_container col-xs-12 col-sm-3'>
       <div class='chat_log'></div>
       <form class="chat_form">
@@ -63,12 +65,15 @@
         <input type="submit" class="chat" value="Send"/>
       </form>
     </div>
+    <!-- game room -->
     <div data-id='<%=room_id%>' class='game_container col-xs-12 col-sm-7'></div>
+    <!-- profile room -->
     <div class='profile_container col-xs-12 col-sm-2'>
       <div class='my_profile'></div>
       <div class='opponent_profile'></div>
     </div>
   </div>
+  <!-- rank page -->
   <div class='overlay'>
     <div class='rank_page'>
     </div>

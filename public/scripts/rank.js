@@ -1,6 +1,10 @@
 $(document).ready(function() {
   let toggle = 0;
+
+  //show rank of all users
   $('.rank').on('click', function(){
+
+    //update current rank and total score of all users
     if(!toggle){
       $.get("/score")
       .done(function(data){

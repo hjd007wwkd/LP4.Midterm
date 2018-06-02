@@ -1,4 +1,7 @@
+
+//rendering base html for game container
 function start() {
+  //waiting room for opponent coming in
   const waiting = $('<div>').addClass('waiting');
   const words = $('<p>').addClass('waitingLetter').text('Waiting For Opponent');
   const waitingAni = $('<div>').addClass('waiting_ani_container');
@@ -6,6 +9,7 @@ function start() {
   waitingAni.append(list);
   waiting.append(words).append(waitingAni);
 
+  //ready room for gamae with opponent
   const ready_room = $('<div>').addClass('ready_room hidden');
   const opponent_container = $('<div>').addClass('opponent_container');
   const opponent_ready = $('<div>').addClass('opponent_ready');
@@ -13,6 +17,7 @@ function start() {
   const ready = $('<div>').addClass('ready').text('Ready');
   ready_room.append(opponent_ready).append(ready);
 
+  //main game screen
   const main = $('<div>').addClass('main hidden');
   const label = $('<div>').addClass('label_both')
   const label_myside = $('<p>').addClass('label_myside').text('Home');
@@ -50,11 +55,13 @@ function start() {
 
   main.append(label).append(point).append(opponent).append(spade).append(choice).append(mine);
 
+  //when game ends, appear win or lose
   const end = $('<div>').addClass('end hidden');
   const result = $('<div>').addClass('result');
   const restart = $('<div>').addClass('restart').text('Restart');;
   end.append(result).append(restart);
 
+  //button for side bar when collapse
   const side_button = $('<div>').addClass('side_button');
   const chat_button = $('<p>').addClass('chat_button').text('Chat');
   const prof_button = $('<p>').addClass('prof_button').text('Profile');
@@ -64,6 +71,7 @@ function start() {
 }
 
 $(document).ready(function() {
+  //clear all the record
   function clear() {
     checkCard.mine = 0;
     checkCard.opponent = 0;
@@ -73,6 +81,7 @@ $(document).ready(function() {
     $('.game_container').empty();
   }
 
+  //update database after the games ends
   function result() {
     if(myPoint > opponentPoint){
       $('.result').text("Winner!!");
@@ -86,6 +95,7 @@ $(document).ready(function() {
     }
   }
 
+  //counting points each time
   function points() {
     if(checkCard.mine > checkCard.opponent) {
       myPoint += currentSpade;
@@ -95,6 +105,8 @@ $(document).ready(function() {
       $('.opponent_point').text(opponentPoint);
     }
   }
+
+  //set random spade card deck
   function setSpade() {
     if(spade.length !== 0) {
       $('.spade img').remove()
@@ -109,10 +121,14 @@ $(document).ready(function() {
     }
   }
 
+  //when you choose which card you wanna pull out
   function onClicked() {
     $('.mine div').on('click', function(){
+      //each card tag has own number in data-card attribute
       const card = $(this).attr('data-card');
+      //send to opponent your choice
       socket.emit('choice_mine', card);
+      //can't click after choose
       $('.mine div').off('click');
       checkCard.mine = Number(card);
       $('.choice .front').append(`<img src="/img/cover.png"/>`);
@@ -122,6 +138,7 @@ $(document).ready(function() {
     })
   }
 
+  //check if all players turn ends
   function checkForNextRound() {
     if(checkCard.mine && checkCard.opponent) {
       points();
@@ -133,6 +150,7 @@ $(document).ready(function() {
     }
   }
 
+  //check if all players are ready in ready room
   function checkIfReady(){
     if(checkReady.length === 2){
       $('.ready_room').addClass('hidden');
@@ -141,6 +159,7 @@ $(document).ready(function() {
     }
   }
 
+  //give some little delay to see each card
   function setTime() {
     if(checkCard.mine && checkCard.opponent){
       setTimeout(function(){
@@ -153,6 +172,7 @@ $(document).ready(function() {
     }
   }
 
+  //updating data
   function postScore(status, score) {
     $.post("/score", {'status': status, 'score': score})
     .done(function(data){
@@ -163,6 +183,7 @@ $(document).ready(function() {
     })
   }
 
+  //make profile for each players on right side
   function makeProfile(whos, variable){
     const username_label = $('<p>').text('Username').addClass('side-label');
     const username = $('<p>').text(variable.username);
@@ -180,6 +201,8 @@ $(document).ready(function() {
   start();
 
   const socket = io();
+
+  //current game state
   let spade;
   let currentSpade;
   let checkCard = {mine: 0, opponent: 0};
@@ -191,6 +214,7 @@ $(document).ready(function() {
 
   const id = $('.game_container').attr('data-id');
 
+  //if id, set private room, else, make random room
   if(id){
     socket.emit('join', id, $('.navbar-text').text());
     socket.emit('shuffle_spade');
@@ -201,26 +225,31 @@ $(document).ready(function() {
     $('.restart').append('<a href="/">Restart</a>')
   }
 
+  //set current my profile from database
   socket.on('my_profile', function(profile){
     myProfile = profile;
     makeProfile('.my_profile', myProfile);
   })
 
+  //set current opponent profile from database
   socket.on('get_opponent_profile', function(profile){
     opponentProfile = profile;
     makeProfile('.opponent_profile', opponentProfile);
   })
 
+  //set current random spade card deck
   socket.on('spade', function(begin_spade){
     spade = begin_spade;
   })
 
+  //when opponent get in, get into ready_room
   socket.on('room_ready', function(){
     $('.waiting').addClass('hidden');
     $('.ready_room').removeClass('hidden');
     socket.emit('send_my_profile', myProfile);
   })
 
+  //get opponent card
   socket.on('get_opponent', function(card){
     $('.opponent .front').append(`<img src="/img/cover.png"/>`);
     $('.opponent .back').append(`<img src="/img/diamond_${card}.png"/>`)
@@ -228,6 +257,7 @@ $(document).ready(function() {
     setTime();
   })
 
+  //when restart button click, change game room to ready_room
   $('.game_container').on('click', '.restart', function(){
     if(opponentProfile) {
       clear();
@@ -240,6 +270,7 @@ $(document).ready(function() {
     }
   })
 
+  //when click ready, let opponent know that
   $('.game_container').on('click', '.ready', function() {
     checkReady.push(1);
     socket.emit('ready', 1);
@@ -248,12 +279,14 @@ $(document).ready(function() {
     $('.ready').addClass('hidden');
   })
 
+  //opponent send ready message to let me know that.
   socket.on('opponent_ready', function(ready){
     $('.opponent_ready').text('opponent ready');
     checkReady.push(ready);
     checkIfReady();
   })
 
+  //send my message to opponent
   $('.chat_form').on('submit', function(e){
     e.preventDefault();
     socket.emit('send message', $(e.target.message).val());
@@ -261,21 +294,25 @@ $(document).ready(function() {
     $(".message").focus();
   });
 
+  //get message from opponent
   socket.on('message', function(msg){
     $('.chat_log').append("<p class=\"otherMessage\">"+msg+"</p>");
     $('.chat_log').scrollTop($('.chat_log')[0].scrollHeight);
   });
 
+  //set my message to log
   socket.on('myMessage', function(msg){
     $('.chat_log').append("<p class=\"myMessage\">"+msg+"</p>");
     $('.chat_log').scrollTop($('.chat_log')[0].scrollHeight);
   });
 
+  //notice opponent I am in the room
   socket.on('Userconnect', function(name){
     $('.end').addClass('hidden');
     $('.chat_log').append("<p class=\"connect\">"+name+" connected"+"</p>");
   });
 
+  //when disconnect opponent, it let me know
   socket.on('disconnect', function(name){
     if($( ".end" ).hasClass( "hidden" ) && !$( ".main" ).hasClass( "hidden" )){
       postScore('wins', myPoint)
@@ -295,6 +332,7 @@ $(document).ready(function() {
     opponentProfile = '';
   })
 
+  //when the private room is over 2, they are sent to unknown room
   socket.on('blank', function(){
     clear();
     $('.profile_container').remove();
