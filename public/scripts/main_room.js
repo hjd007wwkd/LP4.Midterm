@@ -1,5 +1,5 @@
-const CARD_FLIP_DELAY = 1500; // 1500
-const CARD_SHOW_DELAY = 1500; // 1500
+const CARD_FLIP_DELAY = 1000; // 1500
+const CARD_SHOW_DELAY = 2000; // 1500
 
 
 //rendering base html for game container
@@ -22,15 +22,16 @@ function start() {
 
   //main game screen
   const main = $('<div>').addClass('main hidden');
-  const label = $('<div>').addClass('label_both')
-  const label_myside = $('<p>').addClass('label_myside').text('Home');
-  const label_opponent = $('<p>').addClass('label_opponent').text('Opponent');
-  label.append(label_myside).append(label_opponent);
-
-  const point = $('<div>').addClass('point');
+  const both_points = $('<div>').addClass('both_points')
+  const myside_points = $('<div>').addClass('myside_points')
+  const label_myside = $('<p>').addClass('label_myside');
   const my_point = $('<p>').addClass('my_point').text('0');
+  myside_points.append(label_myside).append(my_point);
+
+  const opponent_points = $('<div>').addClass('opponent_points');
+  const label_opponent = $('<p>').addClass('label_opponent');
   const opponent_point = $('<p>').addClass('opponent_point').text('0');
-  point.append(my_point).append(opponent_point);
+  opponent_points.append(label_opponent).append(opponent_point);
 
   const opponent = $('<div>').addClass('opponent');
   const spade = $('<div>').addClass('spade');
@@ -56,7 +57,7 @@ function start() {
     mine.append(card);
   }
 
-  main.append(label).append(point).append(opponent).append(spade).append(choice).append(mine);
+  main.append(myside_points).append(opponent_points).append(opponent).append(spade).append(choice).append(mine);
 
   //when game ends, appear win or lose
   const end = $('<div>').addClass('end hidden');
@@ -247,6 +248,8 @@ $(document).ready(function() {
   //set current opponent profile from database
   socket.on('get_opponent_profile', function(profile){
     opponentProfile = profile;
+    $('.label_myside').text(myProfile.username);
+    $('.label_opponent').text(opponentProfile.username);
     makeProfile('.opponent_profile', opponentProfile);
   })
 

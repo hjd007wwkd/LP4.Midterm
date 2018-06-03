@@ -5,27 +5,37 @@
   border-radius: 15px;
 }
 
-.label_both, .point {
-  width: 100%;
+.myside_points, .opponent_points{
+  width: 49%;
+  display: inline-block;
+  box-shadow: 0 5px rgba(80,80,80,0.5);
 }
 
 .label_myside, .my_point{
-  display: inline-block;
   margin: 0;
-}
-
-.label_opponent, .opponent_point {
+  font-size: 30px;
+  text-align: center;
   display: inline-block;
-  float: right;
-  margin: 0;
 }
 
 .my_point {
-  margin-left: 1em;
+  float: right;
+  padding-right: 10%;
+}
+
+.label_opponent, .opponent_point {
+  margin: 0;
+  font-size: 30px;
+  text-align: center;
+  display: inline-block;
 }
 
 .opponent_point {
-  margin-right: 1em;
+  padding-left: 10%;
+}
+
+.label_opponent {
+  float: right;
 }
 
 
@@ -118,7 +128,7 @@
 .selected_card {
   height: 100%;
   transform-style: preserve-3d;
-  transition: all 1s ease-in-out;
+  transition: all 0.5s ease-in-out;
   width: 100%;
 }
 .flip {
