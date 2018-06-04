@@ -4,9 +4,9 @@ The Card Game is a full stack web game built with Node and Express that allow tw
 
 ## Final Product 
 
-!['This is the front page.'](https://github.com/huang948/LP4.Midterm/blob/master/docs/front-page.png)
-!['This is the login page.](https://github.com/huang948/LP4.Midterm/blob/master/docs/login-page.png)
-!['This is the main page.](https://github.com/huang948/LP4.Midterm/blob/master/docs/main-page.png)
+!['This is the front page.'](https://github.com/hjd007wwkd/LP4.Midterm/blob/master/docs/front-page.png)
+!['This is the login page.](https://github.com/hjd007wwkd/LP4.Midterm/blob/master/docs/login-page.png)
+!['This is the main page.](https://github.com/hjd007wwkd/LP4.Midterm/blob/master/docs/main-page.png)
 
 ## Dependencies
 
